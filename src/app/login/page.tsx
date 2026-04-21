@@ -3,19 +3,27 @@
 import { useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
     const supabase = createSupabaseBrowserClient();
     const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-    if (signInError) return setError(signInError.message);
+    if (signInError) {
+      setLoading(false);
+      return setError(signInError.message);
+    }
     router.push("/dashboard");
+    router.refresh();
   }
 
   async function onGoogleSignIn() {
@@ -34,10 +42,18 @@ export default function LoginPage() {
         <input className="w-full rounded bg-black/30 p-2" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <input className="w-full rounded bg-black/30 p-2" placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         {error ? <p className="text-sm text-red-400">{error}</p> : null}
-        <button className="w-full rounded bg-blue-600 p-2">Login</button>
+        <button type="submit" disabled={loading} className="w-full rounded bg-blue-600 p-2 disabled:opacity-60">
+          {loading ? "Logging in..." : "Login"}
+        </button>
         <button type="button" onClick={onGoogleSignIn} className="w-full rounded border border-white/20 p-2">
           Continue with Google
         </button>
+        <p className="text-sm text-zinc-300">
+          Don&apos;t have an account?{" "}
+          <Link href="/signup" className="text-blue-300 hover:underline">
+            Sign up
+          </Link>
+        </p>
       </form>
     </div>
   );

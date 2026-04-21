@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -9,16 +10,29 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
     const supabase = createSupabaseBrowserClient();
     const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
-    if (signUpError) return setError(signUpError.message);
-    if (!data.user) return setError("Unable to create user.");
+    if (signUpError) {
+      setLoading(false);
+      return setError(signUpError.message);
+    }
+    if (!data.user) {
+      setLoading(false);
+      return setError("Unable to create user.");
+    }
     const { error: insertError } = await supabase.from("users").insert({ id: data.user.id, email, name });
-    if (insertError) return setError(insertError.message);
+    if (insertError) {
+      setLoading(false);
+      return setError(insertError.message);
+    }
     router.push("/onboarding");
+    router.refresh();
   }
 
   return (
@@ -29,7 +43,15 @@ export default function SignupPage() {
         <input className="w-full rounded bg-black/30 p-2" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <input className="w-full rounded bg-black/30 p-2" placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         {error ? <p className="text-sm text-red-400">{error}</p> : null}
-        <button className="w-full rounded bg-blue-600 p-2">Create Account</button>
+        <button type="submit" disabled={loading} className="w-full rounded bg-blue-600 p-2 disabled:opacity-60">
+          {loading ? "Creating..." : "Create Account"}
+        </button>
+        <p className="text-sm text-zinc-300">
+          Already have an account?{" "}
+          <Link href="/login" className="text-blue-300 hover:underline">
+            Login
+          </Link>
+        </p>
       </form>
     </div>
   );
