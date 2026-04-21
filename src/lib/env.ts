@@ -1,0 +1,53 @@
+import { z } from "zod";
+
+const envSchema = z.object({
+  NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+  SUPABASE_DB_URL: z.string().min(1),
+  OPENAI_API_KEY: z.string().min(1),
+  STRIPE_SECRET_KEY: z.string().min(1),
+  STRIPE_PRICE_PRO_ID: z.string().min(1),
+  STRIPE_PRICE_AGENCY_ID: z.string().min(1),
+  STRIPE_PRICE_ENTERPRISE_ID: z.string().min(1),
+  STRIPE_WEBHOOK_SECRET: z.string().min(1),
+  RESEND_API_KEY: z.string().min(1),
+  TOKEN_ENCRYPTION_KEY: z.string().min(32),
+  APP_BASE_URL: z.string().url(),
+  LINKEDIN_CLIENT_ID: z.string().min(1),
+  LINKEDIN_CLIENT_SECRET: z.string().min(1),
+  META_CLIENT_ID: z.string().min(1),
+  META_CLIENT_SECRET: z.string().min(1),
+  GOOGLE_CLIENT_ID: z.string().min(1),
+  GOOGLE_CLIENT_SECRET: z.string().min(1),
+  X_CLIENT_ID: z.string().min(1),
+  X_CLIENT_SECRET: z.string().min(1),
+  WORKER_SECRET: z.string().min(1),
+});
+
+export type Env = z.infer<typeof envSchema>;
+
+export const env = envSchema.parse({
+  NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+  SUPABASE_DB_URL: process.env.SUPABASE_DB_URL,
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+  STRIPE_PRICE_PRO_ID: process.env.STRIPE_PRICE_PRO_ID,
+  STRIPE_PRICE_AGENCY_ID: process.env.STRIPE_PRICE_AGENCY_ID,
+  STRIPE_PRICE_ENTERPRISE_ID: process.env.STRIPE_PRICE_ENTERPRISE_ID,
+  STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+  RESEND_API_KEY: process.env.RESEND_API_KEY,
+  TOKEN_ENCRYPTION_KEY: process.env.TOKEN_ENCRYPTION_KEY,
+  APP_BASE_URL: process.env.APP_BASE_URL,
+  LINKEDIN_CLIENT_ID: process.env.LINKEDIN_CLIENT_ID,
+  LINKEDIN_CLIENT_SECRET: process.env.LINKEDIN_CLIENT_SECRET,
+  META_CLIENT_ID: process.env.META_CLIENT_ID,
+  META_CLIENT_SECRET: process.env.META_CLIENT_SECRET,
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  X_CLIENT_ID: process.env.X_CLIENT_ID,
+  X_CLIENT_SECRET: process.env.X_CLIENT_SECRET,
+  WORKER_SECRET: process.env.WORKER_SECRET,
+});
