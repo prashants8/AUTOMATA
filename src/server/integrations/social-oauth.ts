@@ -1,6 +1,7 @@
 import { env } from "@/lib/env";
 
 export type SocialProvider = "linkedin" | "meta" | "youtube" | "x";
+const socialProviders: SocialProvider[] = ["linkedin", "meta", "youtube", "x"];
 
 type ProviderConfig = {
   authUrl: string;
@@ -43,6 +44,12 @@ const providerConfig: Record<SocialProvider, ProviderConfig> = {
 
 export function getProviderConfig(provider: SocialProvider) {
   return providerConfig[provider];
+}
+
+export function parseSocialProvider(input: string): SocialProvider | null {
+  return socialProviders.includes(input as SocialProvider)
+    ? (input as SocialProvider)
+    : null;
 }
 
 export async function exchangeProviderCode(

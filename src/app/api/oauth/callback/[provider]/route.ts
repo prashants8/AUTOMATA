@@ -3,7 +3,7 @@ import { createSupabaseServerClient } from "@/lib/supabase-server";
 import {
   exchangeProviderCode,
   getProviderConfig,
-  SocialProvider,
+  parseSocialProvider,
 } from "@/server/integrations/social-oauth";
 import { encryptToken } from "@/server/security/token-vault";
 import { env } from "@/lib/env";
@@ -11,9 +11,13 @@ import { getCurrentWorkspaceId } from "@/server/services/workspace-service";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ provider: SocialProvider }> },
+  { params }: { params: Promise<{ provider: string }> },
 ) {
-  const { provider } = await params;
+  const { provider: rawProvider } = await params;
+  const provider = parseSocialProvider(rawProvider);
+  if (!provider) {
+    return NextResponse.json({ error: "Unsupported provider" }, { status: 400 });
+  }
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   if (!code) {
